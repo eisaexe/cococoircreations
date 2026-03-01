@@ -4,10 +4,8 @@ export const products = [
   {
     id: 1,
     name: "Enriched Vermicompost",
-    image: "coco-coir-app/public/cocopeat.jpg", 
     description: "Premium organic fertilizer rich in NPK and micronutrients.",
     wholesaleOptions: [10, 25, 50],
-    // NEW: Detailed Info
     fullDetails: {
       headline: "ENRICH VERMI COMPOST",
       sections: [
@@ -41,7 +39,6 @@ export const products = [
   {
     id: 2,
     name: "Enriched Cocopeat",
-    image: "./public/cocopeat.jpg",
     description: "High water retention medium for optimal root growth.",
     wholesaleOptions: [5, 10, 25],
     fullDetails: {
@@ -84,7 +81,6 @@ export const products = [
   {
     id: 3,
     name: "Enriched Potting Mix",
-    image: "./public/pot.png",
     description: "Ready-to-use blend for flowers and vegetables.",
     wholesaleOptions: [10, 20],
     fullDetails: {
@@ -131,10 +127,8 @@ export const products = [
   {
     id: 4,
     name: "Coconut Fiber",
-    image: "./public/fiber.png",
     description: "Raw fiber extracted from tender coconuts.",
     wholesaleOptions: [50, 100],
-    // Generic fallback for products without specific text
     fullDetails: {
       headline: "PREMIUM COCONUT FIBER",
       sections: [
@@ -143,17 +137,15 @@ export const products = [
           items: ["Natural extraction", "Biodegradable", "High durability"]
         }
       ],
-footer: {
+      footer: {
         manufacturer: "Manufactured & Marketed by COCO COIR CREATIONS",
         address: "18/1, Hosahalli, Jala 2, Billamaranahalli, near Assetz Earth & Essense, Yelahanka Taluk, Banglore North, Bengaluru - 562157",
-        
       }
-        }
+    }
   },
   {
     id: 5,
     name: "Coir Rope",
-    image: "./public/rope.webp",
     description: "Strong, eco-friendly rope made from coconut fiber.",
     wholesaleOptions: [100, 200],
     fullDetails: {
@@ -164,17 +156,15 @@ footer: {
           items: ["Saltwater resistant", "100% Organic", "High strength"]
         }
       ],
-footer: {
+      footer: {
         manufacturer: "Manufactured & Marketed by COCO COIR CREATIONS",
         address: "18/1, Hosahalli, Jala 2, Billamaranahalli, near Assetz Earth & Essense, Yelahanka Taluk, Banglore North, Bengaluru - 562157",
-       
       }
-        }
+    }
   },
   {
     id: 6,
     name: "Coco Chips",
-    image: "./public/8.png",
     description: "Coconut chips used for making charcoal and industrial applications.",
     wholesaleOptions: [10, 25, 50],
     fullDetails: {

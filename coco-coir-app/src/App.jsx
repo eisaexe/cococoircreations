@@ -8,17 +8,33 @@ import './App.css';
 
 const LOGO_URL = "./logo.jpeg";
 
+// Product images - defined here in App.jsx
+const productImages = {
+  1: "./vermi.png",
+  2: "./cocopeat.jpg",
+  3: "./pot.png",
+  4: "./fiber.png",
+  5: "./rope.webp",
+  6: "./8.png"
+};
+
+// Merge products with images
+const productsWithImages = products.map(product => ({
+  ...product,
+  image: productImages[product.id]
+}));
+
 const galleryImages = [
-  { id: 1, src: "./3.png", title: "Compressed Peat Blocks", size: "tall", offset: "offset-1" },
-  { id: 2, src: "./2.png", title: "Fiber Extraction Process", size: "wide", offset: "offset-2" },
-  { id: 3, src: "./4.png", title: "Used in Nurseries", size: "square", offset: "offset-0" },
-  { id: 4, src: "./1.png", title: "Handmade Coir Rope", size: "tall", offset: "offset-3" },
-  { id: 5, src: "./6.png", title: "Ready for Export", size: "wide", offset: "offset-1" },
-  { id: 6, src: "./7.png", title: "Premium Texture", size: "square", offset: "offset-2" },
-  { id: 7, src: "./5.png", title: "Raw Material", size: "tall", offset: "offset-0" },
-  { id: 8, src: "./8.png", title: "Processing Unit", size: "wide", offset: "offset-3" },
-  { id: 9, src: "./rope.webp", title: "Packing Facility", size: "square", offset: "offset-1" },
-  { id: 10, src: "./cocopeat.jpg", title: "Export Ready", size: "square", offset: "offset-2" },
+  { id: 1, src: "./cocopeat.jpg", title: "Premium Cocopeat Blocks", size: "tall", offset: "offset-1" },
+  { id: 2, src: "./fiber.png", title: "Natural Coconut Fiber", size: "wide", offset: "offset-2" },
+  { id: 3, src: "./pot.png", title: "Enriched Potting Mix", size: "square", offset: "offset-0" },
+  { id: 4, src: "./vermi.png", title: "Organic Vermicompost", size: "tall", offset: "offset-3" },
+  { id: 5, src: "./rope.webp", title: "Handmade Coir Rope", size: "wide", offset: "offset-1" },
+  { id: 6, src: "./8.png", title: "Coco Chips Export", size: "square", offset: "offset-2" },
+  { id: 7, src: "./1.png", title: "Raw Material Processing", size: "tall", offset: "offset-0" },
+  { id: 8, src: "./2.png", title: "Quality Control", size: "wide", offset: "offset-3" },
+  { id: 9, src: "./3.png", title: "Packaging Facility", size: "square", offset: "offset-1" },
+  { id: 10, src: "./4.png", title: "Warehouse Storage", size: "square", offset: "offset-2" },
 ];
 
 export default function App() {
@@ -39,7 +55,7 @@ export default function App() {
   const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
   const cartDetails = Object.entries(cart).map(([key, qty]) => {
     const [prodId, size] = key.split('_');
-    const product = products.find(p => p.id.toString() === prodId);
+    const product = productsWithImages.find(p => p.id.toString() === prodId);
     return { ...product, size, qty };
   });
 
@@ -150,7 +166,7 @@ export default function App() {
             <section className="products-section" ref={productsRef}>
               <h3 className="section-title">Our Products</h3>
               <div className="product-stack">
-                {products.map((product) => (
+                {productsWithImages.map((product) => (
                   <motion.div
                     key={product.id}
                     initial={{ opacity: 0, x: -20 }}
