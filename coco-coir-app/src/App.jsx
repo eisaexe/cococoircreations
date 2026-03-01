@@ -232,7 +232,6 @@ export default function App() {
                 <p><Phone size={16} /> +91 90087 74218</p>
                 <p><Globe size={16} /> www.cococoircreations.com</p>
               </div>
-              <p className="copyright">© 2026 Coco Coir Creations</p>
             </footer>
           </>
         ) : (
