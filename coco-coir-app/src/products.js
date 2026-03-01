@@ -4,7 +4,7 @@ export const products = [
   {
     id: 1,
     name: "Enriched Vermicompost",
-    image: "./public/vermi.png", 
+    image: "coco-coir-app/public/cocopeat.jpg", 
     description: "Premium organic fertilizer rich in NPK and micronutrients.",
     wholesaleOptions: [10, 25, 50],
     // NEW: Detailed Info
