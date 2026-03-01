@@ -1,31 +1,46 @@
 // src/App.jsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Phone, Globe, MapPin, MessageCircle, Image as ImageIcon, ArrowLeft, X, Info, ChevronRight } from 'lucide-react';
+import { ShoppingBag, Phone, Globe, MapPin, MessageCircle, Image as ImageIcon, ArrowLeft, X, Info, ChevronRight, Edit2, PhoneCall } from 'lucide-react';
 import NatureBackground from './NatureBackground';
 import { products } from './products';
 import './App.css';
 
-const LOGO_URL = "./logo.jpeg"; 
+const LOGO_URL = "./logo.jpeg";
 
 const galleryImages = [
-  { id: 1, src: "https://placehold.co/400x600/16a34a/fff?text=Coco+Peat+Block", title: "Compressed Peat Blocks", size: "tall" },
-  { id: 2, src: "https://placehold.co/600x400/5D3A29/fff?text=Fiber+Extraction", title: "Fiber Extraction Process", size: "wide" },
-  { id: 3, src: "https://placehold.co/400x400/8CC63F/fff?text=Nursery", title: "Used in Nurseries", size: "square" },
-  { id: 4, src: "https://placehold.co/400x500/15803d/fff?text=Rope+Making", title: "Handmade Coir Rope", size: "tall" },
-  { id: 5, src: "https://placehold.co/500x400/d9f99d/000?text=Finished+Product", title: "Ready for Export", size: "wide" },
-  { id: 6, src: "https://placehold.co/400x400/064e3b/fff?text=Texture", title: "Premium Texture", size: "square" },
+  { id: 1, src: "./3.png", title: "Compressed Peat Blocks", size: "tall", offset: "offset-1" },
+  { id: 2, src: "./2.png", title: "Fiber Extraction Process", size: "wide", offset: "offset-2" },
+  { id: 3, src: "./4.png", title: "Used in Nurseries", size: "square", offset: "offset-0" },
+  { id: 4, src: "./1.png", title: "Handmade Coir Rope", size: "tall", offset: "offset-3" },
+  { id: 5, src: "./5.png", title: "Ready for Export", size: "wide", offset: "offset-1" },
+  { id: 6, src: "https://placehold.co/400x400/064e3b/fff?text=Texture", title: "Premium Texture", size: "square", offset: "offset-2" },
+  { id: 7, src: "https://placehold.co/400x550/228B22/fff?text=Coconut+Husk", title: "Raw Material", size: "tall", offset: "offset-0" },
+  { id: 8, src: "https://placehold.co/500x350/8B4513/fff?text=Processing", title: "Processing Unit", size: "wide", offset: "offset-3" },
+  { id: 9, src: "https://placehold.co/400x400/2E8B57/fff?text=Packing", title: "Packing Facility", size: "square", offset: "offset-1" },
+  { id: 10, src: "https://placehold.co/450x400/556B2F/fff?text=Export", title: "Export Ready", size: "square", offset: "offset-2" },
 ];
 
 export default function App() {
   const [cart, setCart] = useState({});
   const [showCheckout, setShowCheckout] = useState(false);
+  const [checkoutStep, setCheckoutStep] = useState('review');
   const [currentView, setCurrentView] = useState('home');
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  
+  const [quickProduct, setQuickProduct] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastVisible, setToastVisible] = useState(false);
+
   const [formData, setFormData] = useState({
     name: '', phone: '', email: '', company: ''
+  });
+
+  const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+  const cartDetails = Object.entries(cart).map(([key, qty]) => {
+    const [prodId, size] = key.split('_');
+    const product = products.find(p => p.id.toString() === prodId);
+    return { ...product, size, qty };
   });
 
   const productsRef = useRef(null);
@@ -33,7 +48,7 @@ export default function App() {
   const scrollToProducts = () => {
     setCurrentView('home');
     setTimeout(() => {
-        productsRef.current?.scrollIntoView({ behavior: 'smooth' });
+      productsRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
 
@@ -49,6 +64,12 @@ export default function App() {
       }
       return { ...prev, [key]: newQty };
     });
+    if (change > 0) {
+      const text = `${change} item${change > 1 ? 's' : ''} added`;
+      setToastMessage(text);
+      setToastVisible(true);
+      setTimeout(() => setToastVisible(false), 3000);
+    }
   };
 
   const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -59,28 +80,42 @@ export default function App() {
       alert("Please fill in your Name and Phone Number.");
       return;
     }
-    // WhatsApp Logic
-    alert("Redirecting to WhatsApp..."); 
+    let message = `Name: ${formData.name}\nPhone: ${formData.phone}`;
+    if (formData.email) message += `\nEmail: ${formData.email}`;
+    if (formData.company) message += `\nCompany: ${formData.company}`;
+    if (cartDetails.length > 0) {
+      message += "\n\nOrder items:";
+      cartDetails.forEach(item => {
+        message += `\n- ${item.name} (${item.size}kg) x ${item.qty}`;
+      });
+    }
+    const encoded = encodeURIComponent(message);
+    const waNumber = "919876543210";
+    const url = `https://wa.me/${waNumber}?text=${encoded}`;
+    window.open(url, '_blank');
+    setShowCheckout(false);
+    setCart({});
+    setCheckoutStep('review');
   };
 
   return (
     <>
       <NatureBackground />
-      
+
       <div className="app-container">
-        
+
         {/* --- HEADER --- */}
         <header className="glass-header">
           <div className="brand" onClick={() => setCurrentView('home')}>
             <img src={LOGO_URL} alt="Coco Coir Creations" className="logo" />
             <div className="title-wrapper">
-              <h1 className="header-title">COCO COIR <br/> CREATIONS</h1>
+              <h1 className="header-title">COCO COIR <br /> CREATIONS</h1>
             </div>
           </div>
-          
+
           <button className="cart-icon" onClick={() => setShowCheckout(true)}>
-             <ShoppingBag size={20} />
-             {Object.keys(cart).length > 0 && <span className="dot"></span>}
+            <ShoppingBag size={20} />
+            {Object.keys(cart).length > 0 && <span className="dot"></span>}
           </button>
         </header>
 
@@ -89,7 +124,7 @@ export default function App() {
           <>
             {/* --- HERO SECTION --- */}
             <section className="hero">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
@@ -99,14 +134,14 @@ export default function App() {
                 <p className="hero-quote">
                   "From the earth, for the earth. We turn humble husks into powerful growth solutions."
                 </p>
-                
+
                 <div className="hero-buttons">
-                    <button className="cta-btn primary" onClick={scrollToProducts}>
-                        Explore Products
-                    </button>
-                    <button className="cta-btn secondary" onClick={() => setCurrentView('gallery')}>
-                        <ImageIcon size={18} /> View Gallery
-                    </button>
+                  <button className="cta-btn primary" onClick={scrollToProducts}>
+                    Explore Now
+                  </button>
+                  <button className="cta-btn secondary" onClick={() => setCurrentView('gallery')}>
+                    <ImageIcon size={18} /> View Gallery
+                  </button>
                 </div>
               </motion.div>
             </section>
@@ -116,12 +151,16 @@ export default function App() {
               <h3 className="section-title">Our Products</h3>
               <div className="product-stack">
                 {products.map((product) => (
-                  <motion.div 
+                  <motion.div
                     key={product.id}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
                     className="product-row glass-panel"
+                    onClick={(e) => {
+                      if (e.target.closest('.qty-btn') || e.target.closest('.more-details-btn')) return;
+                      setQuickProduct(product);
+                    }}
                   >
                     <div className="row-image">
                       <img src={product.image} alt={product.name} />
@@ -129,13 +168,11 @@ export default function App() {
                     <div className="row-details">
                       <h2>{product.name}</h2>
                       <p className="desc">{product.description}</p>
-                      
-                      {/* More Details Button */}
-                      <button className="more-details-btn" onClick={() => setSelectedProduct(product)}>
-                         <Info size={16} /> More Details
+
+                      <button className="more-details-btn" onClick={(e) => { e.stopPropagation(); setSelectedProduct(product); }}>
+                        <Info size={16} /> More Details
                       </button>
 
-                      {/* QUANTITY SELECTOR WITH + AND - SYMBOLS */}
                       <div className="size-selector">
                         {product.wholesaleOptions.map(size => {
                           const qty = cart[`${product.id}_${size}`] || 0;
@@ -143,23 +180,21 @@ export default function App() {
                             <div key={size} className="size-control">
                               <span className="size-label">{size}kg Bag</span>
                               <div className="stepper">
-                                {/* MINUS BUTTON */}
-                                <button 
-                                    onClick={() => handleQty(product.id, size, -1)} 
-                                    disabled={qty === 0}
-                                    className="qty-btn minus"
+                                <button
+                                  onClick={() => handleQty(product.id, size, -1)}
+                                  disabled={qty === 0}
+                                  className="qty-btn minus"
                                 >
-                                    -
+                                  -
                                 </button>
-                                
+
                                 <span className={`qty-display ${qty > 0 ? 'active' : ''}`}>{qty}</span>
-                                
-                                {/* PLUS BUTTON */}
-                                <button 
-                                    onClick={() => handleQty(product.id, size, 1)} 
-                                    className="qty-btn plus"
+
+                                <button
+                                  onClick={() => handleQty(product.id, size, 1)}
+                                  className="qty-btn plus"
                                 >
-                                    +
+                                  +
                                 </button>
                               </div>
                             </div>
@@ -185,121 +220,291 @@ export default function App() {
             </footer>
           </>
         ) : (
-          /* --- GALLERY PAGE --- */
+/* --- GALLERY PAGE --- */
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="gallery-view">
             <div className="gallery-header">
-                <button className="back-btn" onClick={() => setCurrentView('home')}>
-                    <ArrowLeft size={20} /> Back
-                </button>
-                <h2>Our Gallery</h2>
+              <button className="back-btn" onClick={() => setCurrentView('home')}>
+                <ArrowLeft size={20} /> Home
+              </button>
+              <h2>Our Gallery</h2>
             </div>
             <div className="gallery-grid">
-                {galleryImages.map((img) => (
-                    <motion.div 
-                        key={img.id} 
-                        className={`gallery-item ${img.size}`}
-                        layoutId={`img-${img.id}`}
-                        onClick={() => setSelectedImage(img)}
-                        whileHover={{ scale: 1.02 }}
-                    >
-                        <img src={img.src} alt={img.title} />
-                        <div className="overlay"><span>{img.title}</span></div>
-                    </motion.div>
-                ))}
+              {galleryImages.map((img) => (
+                <motion.div
+                  key={img.id}
+                  className={`gallery-item ${img.size}`}
+                  layoutId={`img-${img.id}`}
+                  onClick={() => setSelectedImage(img)}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <img src={img.src} alt={img.title} />
+                  <div className="overlay"><span>{img.title}</span></div>
+                </motion.div>
+              ))}
+            </div>
+            <div className="gallery-cta">
+              <button className="cta-btn primary" onClick={scrollToProducts}>
+                Explore Our Products <ChevronRight size={20} />
+              </button>
             </div>
           </motion.div>
         )}
 
-        {/* --- CHATBOT BUTTON --- */}
-        <div className="chatbot-fab" onClick={() => alert("AI Chatbot coming soon!")}>
+{/* --- FLOATING CONTACT BUTTONS --- */}
+        {/* Left side - Call and WhatsApp */}
+        <div className="contact-fabs-left">
+          <a href="tel:+919876543210" className="contact-fab call-fab" title="Call Us">
+            <PhoneCall size={24} />
+          </a>
+          <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="contact-fab whatsapp-fab" title="WhatsApp">
             <MessageCircle size={24} />
+          </a>
+        </div>
+
+        {/* Right side - Chatbot */}
+        <div className="chatbot-fab" onClick={() => alert("AI Chatbot coming soon!")}>
+          <MessageCircle size={24} />
         </div>
 
         {/* --- CHECKOUT MODAL --- */}
         <AnimatePresence>
           {showCheckout && (
             <motion.div className="checkout-overlay">
-                <motion.div className="checkout-modal">
-                    <button onClick={() => setShowCheckout(false)} className="close-btn"><X size={24}/></button>
-                    <div style={{padding: '20px'}}>
-                         <h3>Checkout</h3>
-                         {/* Paste your full checkout form logic here if needed */}
-                         <p>Please review your order before sending via WhatsApp.</p>
-                         <button className="submit-btn" onClick={handleWhatsAppRedirect}>Confirm Order</button>
-                    </div>
-                </motion.div>
+              <motion.div className="checkout-modal">
+                <div style={{ padding: '20px' }}>
+                  {checkoutStep === 'review' ? (
+                    <>
+                      <button type="button" className="back-link" onClick={() => setShowCheckout(false)} style={{ marginBottom: 15, display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', fontWeight: 600 }}><ArrowLeft size={18} /> Back</button>
+                      <h3>Your Cart</h3>
+                      {cartDetails.length === 0 ? (
+                        <p>Your cart is empty.</p>
+                      ) : (
+                        <ul className="cart-list">
+                          {cartDetails.map((item, idx) => (
+                            <li key={idx} className="cart-item">
+                              <div className="item-info">
+                                <span>{item.name} – {item.size}kg × {item.qty}</span>
+                              </div>
+                              <div className="item-actions">
+                                <button type="button" className="cart-btn edit" title="Edit" onClick={() => setQuickProduct(item)}>
+                                  ✏️
+                                </button>
+                                <button type="button" className="cart-btn remove" title="Remove" onClick={() => {
+                                  const key = `${item.id}_${item.size}`;
+                                  setCart(prev => {
+                                    const newCart = { ...prev };
+                                    delete newCart[key];
+                                    return newCart;
+                                  });
+                                }}>
+                                  ✕
+                                </button>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {cartDetails.length > 0 && (
+                        <button className="submit-btn" onClick={() => setCheckoutStep('details')}>Confirm Order</button>
+                      )}
+                    </>
+                  ) : (
+                    <form onSubmit={handleWhatsAppRedirect}>
+                      <button type="button" className="back-link" onClick={() => setCheckoutStep('review')} style={{ marginBottom: 15, display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', fontWeight: 600 }}><ArrowLeft size={18} /> Back to Cart</button>
+                      <h3>Customer Information</h3>
+                      <div className="input-group">
+                        <input name="name" placeholder="Full Name" value={formData.name} onChange={handleInputChange} required />
+                      </div>
+                      <div className="input-group">
+                        <input name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleInputChange} required />
+                      </div>
+                      <div className="input-group">
+                        <input name="email" placeholder="Email (optional)" value={formData.email} onChange={handleInputChange} />
+                      </div>
+                      <div className="input-group">
+                        <input name="company" placeholder="Company (optional)" value={formData.company} onChange={handleInputChange} />
+                      </div>
+                      <button className="submit-btn" type="submit">Send via WhatsApp</button>
+                    </form>
+                  )}
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* --- PRODUCT DETAILS MODAL --- */}
+{/* --- PRODUCT DETAILS MODAL --- */}
         <AnimatePresence>
-            {selectedProduct && selectedProduct.fullDetails && (
-                <motion.div 
-                    className="product-details-modal"
-                    initial={{ y: "100%" }}
-                    animate={{ y: 0 }}
-                    exit={{ y: "100%" }}
-                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                >
-                    <div className="details-header">
-                        <button className="back-btn-details" onClick={() => setSelectedProduct(null)}>
-                            <ArrowLeft size={24} /> Back
-                        </button>
-                    </div>
-                    
-                    <div className="details-content">
-                        <img src={selectedProduct.image} alt={selectedProduct.name} className="detail-hero-img" />
-                        
-                        <div className="detail-body">
-                            <h1 className="detail-title">{selectedProduct.fullDetails.headline}</h1>
-                            {selectedProduct.fullDetails.subHeadline && (
-                                <p className="detail-subtitle">{selectedProduct.fullDetails.subHeadline}</p>
-                            )}
-                            
-                            {selectedProduct.fullDetails.sections.map((section, index) => (
-                                <div key={index} className="detail-section">
-                                    <h3 className="section-header">{section.title}</h3>
-                                    <ul className="detail-list">
-                                        {section.items.map((item, i) => (
-                                            <li key={i}>
-                                                <ChevronRight size={16} className="bullet-icon" />
-                                                <span>{item}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
+          {selectedProduct && selectedProduct.fullDetails && (
+            <motion.div
+              className="product-details-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setSelectedProduct(null);
+                }
+              }}
+            >
+              <motion.div
+                className="details-content"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="details-header">
+                  <button className="back-btn-details" onClick={() => setSelectedProduct(null)}>
+                    <ArrowLeft size={20} /> Back
+                  </button>
+                  <button className="details-close-btn" onClick={() => setSelectedProduct(null)}>
+                    <X size={20} />
+                  </button>
+                </div>
 
-                            <div className="detail-footer">
-                                <p><strong>Manufacturer:</strong> {selectedProduct.fullDetails.footer.manufacturer}</p>
-                                <p><strong>Address:</strong> {selectedProduct.fullDetails.footer.address}</p>
-                                {selectedProduct.fullDetails.footer.disclaimer && (
-                                    <p className="disclaimer"><em>* {selectedProduct.fullDetails.footer.disclaimer}</em></p>
-                                )}
+                <div className="details-content-inner">
+                  <img src={selectedProduct.image} alt={selectedProduct.name} className="detail-hero-img" />
+
+                  <div className="detail-body">
+                    <h1 className="detail-title">{selectedProduct.fullDetails.headline}</h1>
+                    {selectedProduct.fullDetails.subHeadline && (
+                      <p className="detail-subtitle">{selectedProduct.fullDetails.subHeadline}</p>
+                    )}
+
+                    {selectedProduct.fullDetails.sections.map((section, index) => (
+                      <div key={index} className="detail-section">
+                        <h3 className="section-header">{section.title}</h3>
+                        <ul className="detail-list">
+                          {section.items.map((item, i) => (
+                            <li key={i}>
+                              <ChevronRight size={16} className="bullet-icon" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+
+                    <div className="detail-qty-section">
+                      {selectedProduct.wholesaleOptions.map(size => {
+                        const key = `${selectedProduct.id}_${size}`;
+                        const qty = cart[key] || 0;
+                        return (
+                          <div key={size} className="size-control">
+                            <span className="size-label">{size}kg Bag</span>
+                            <div className="stepper">
+                              <button
+                                onClick={() => handleQty(selectedProduct.id, size, -1)}
+                                disabled={qty === 0}
+                                className="qty-btn minus"
+                              >
+                                -
+                              </button>
+                              <span className={`qty-display ${qty > 0 ? 'active' : ''}`}>{qty}</span>
+                              <button
+                                onClick={() => handleQty(selectedProduct.id, size, 1)}
+                                className="qty-btn plus"
+                              >
+                                +
+                              </button>
                             </div>
-                        </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                </motion.div>
-            )}
+
+                    <div className="detail-footer">
+                      <p><strong>Manufacturer:</strong> {selectedProduct.fullDetails.footer.manufacturer}</p>
+                      <p><strong>Address:</strong> {selectedProduct.fullDetails.footer.address}</p>
+                      {selectedProduct.fullDetails.footer.disclaimer && (
+                        <p className="disclaimer"><em>* {selectedProduct.fullDetails.footer.disclaimer}</em></p>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 10, marginTop: 20, paddingTop: 20, borderTop: '1px solid #ddd' }}>
+                      <button className="cta-btn secondary" onClick={() => setSelectedProduct(null)}>Back</button>
+                      <button className="cta-btn primary" onClick={() => setSelectedProduct(null)}>Add to Cart</button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+{/* Quick product popup */}
+          {quickProduct && (
+            <motion.div className="quick-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setQuickProduct(null);
+                }
+              }}
+            >
+              <div className="quick-card-full glass-panel" onClick={(e) => e.stopPropagation()}>
+                <button className="back-btn-quick" onClick={() => setQuickProduct(null)}><ArrowLeft size={18} /> Back</button>
+                <div className="quick-hero-image">
+                  <img src={quickProduct.image} alt={quickProduct.name} />
+                </div>
+                <div className="quick-body">
+                  <h3>{quickProduct.name}</h3>
+                  <p className="desc">{quickProduct.description}</p>
+
+                  <div className="detail-qty-section small">
+                    {quickProduct.wholesaleOptions.map(size => {
+                      const key = `${quickProduct.id}_${size}`;
+                      const qty = cart[key] || 0;
+                      return (
+                        <div key={size} className="size-control">
+                          <span className="size-label">{size}kg</span>
+                          <div className="stepper">
+                            <button onClick={() => handleQty(quickProduct.id, size, -1)} disabled={qty === 0} className="qty-btn minus">-</button>
+                            <span className={`qty-display ${qty > 0 ? 'active' : ''}`}>{qty}</span>
+                            <button onClick={() => handleQty(quickProduct.id, size, 1)} className="qty-btn plus">+</button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+                    <button className="cta-btn secondary" onClick={() => { setSelectedProduct(quickProduct); setQuickProduct(null); }}>More Description</button>
+                    <button className="cta-btn primary" onClick={() => setQuickProduct(null)}>Add to Cart</button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* --- LIGHTBOX MODAL --- */}
         <AnimatePresence>
-            {selectedImage && (
-                <motion.div className="lightbox" onClick={() => setSelectedImage(null)}>
-                    <button className="close-lightbox"><X size={30} /></button>
-                    <img src={selectedImage.src} alt={selectedImage.title} />
-                    <h3>{selectedImage.title}</h3>
-                </motion.div>
-            )}
+          {selectedImage && (
+            <motion.div className="lightbox" onClick={() => setSelectedImage(null)}>
+              <button className="close-lightbox"><X size={30} /></button>
+              <img src={selectedImage.src} alt={selectedImage.title} />
+              <h3>{selectedImage.title}</h3>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Floating Checkout Button */}
         {Object.keys(cart).length > 0 && !showCheckout && (
           <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} className="fab" onClick={() => setShowCheckout(true)}>
-            Review Order ({Object.values(cart).reduce((a, b) => a + b, 0)})
+            Review Order ({totalItems})
           </motion.button>
+        )}
+
+        {/* Toast notification */}
+        {toastVisible && (
+          <div className="cart-toast">
+            <span>{toastMessage}</span>
+            <button className="go-cart-btn" onClick={() => setShowCheckout(true)}>Go to Cart</button>
+          </div>
         )}
 
       </div>

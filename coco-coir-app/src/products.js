@@ -170,5 +170,54 @@ footer: {
        
       }
         }
+  },
+  {
+    id: 6,
+    name: "Coco Chips",
+    image: "./public/cocopeat.jpg",
+    description: "Coconut chips used for making charcoal and industrial applications.",
+    wholesaleOptions: [10, 25, 50],
+    fullDetails: {
+      headline: "COCO CHIPS",
+      subHeadline: "Premium Quality Coconut Chips for Charcoal & Industrial Use",
+      sections: [
+        {
+          title: "BENEFITS",
+          items: [
+            "High carbon content ideal for charcoal production",
+            "Excellent heat retention properties",
+            "Eco-friendly alternative to traditional charcoal",
+            "Long-lasting burn time",
+            "Low ash content compared to regular charcoal",
+            "Sustainable and renewable resource"
+          ]
+        },
+        {
+          title: "APPLICATIONS",
+          items: [
+            "Charcoal manufacturing",
+            "Industrial heating",
+            "Barbecue and grilling",
+            "Water filtration",
+            "Horticulture and gardening"
+          ]
+        },
+        {
+          title: "TECHNICAL SPECIFICATIONS",
+          items: [
+            "Fixed Carbon: 75-85%",
+            "Volatile Matter: 15-20%",
+            "Ash Content: <5%",
+            "Moisture: <10%",
+            "Size: 10-30mm chips"
+          ]
+        }
+      ],
+      footer: {
+        manufacturer: "Manufactured & Marketed by COCO COIR CREATIONS",
+        address: "18/1, Hosahalli, Jala 2, Billamaranahalli, near Assetz Earth & Essense, Yelahanka Taluk, Banglore North, Bengaluru - 562157",
+        disclaimer: "PRODUCT MAY LOSE WEIGHT DUE TO LOSS OF MOISTURE"
+      }
+    }
   }
 ];
