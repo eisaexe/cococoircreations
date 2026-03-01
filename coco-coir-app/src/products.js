@@ -174,7 +174,7 @@ footer: {
   {
     id: 6,
     name: "Coco Chips",
-    image: "./public/cocopeat.jpg",
+    image: "./public/8.png",
     description: "Coconut chips used for making charcoal and industrial applications.",
     wholesaleOptions: [10, 25, 50],
     fullDetails: {

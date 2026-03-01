@@ -220,29 +220,42 @@ body {
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 180px;
-  gap: 30px;
+  grid-template-columns: repeat(1, 1fr);
+  grid-auto-rows: 400px;
+  gap: 15px;
   padding: 20px;
-  max-width: 700px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
-/* Funky gallery offsets - more pronounced */
+/* Zigzag pattern for gallery items */
+.gallery-item:nth-child(6n+1),
+.gallery-item:nth-child(6n+3),
+.gallery-item:nth-child(6n+5) {
+  transform: translateY(0);
+}
+
+.gallery-item:nth-child(6n+2),
+.gallery-item:nth-child(6n+4),
+.gallery-item:nth-child(6n+6) {
+  transform: translateY(30px);
+}
+
+/* Offset classes for zigzag */
 .gallery-item.offset-0 {
-  transform: rotate(-3deg) scale(1.02);
+  transform: translateY(0px);
 }
 
 .gallery-item.offset-1 {
-  transform: rotate(2deg) scale(0.98);
+  transform: translateY(25px);
 }
 
 .gallery-item.offset-2 {
-  transform: rotate(-1.5deg) scale(1.03);
+  transform: translateY(0px);
 }
 
 .gallery-item.offset-3 {
-  transform: rotate(3deg) scale(0.97);
+  transform: translateY(25px);
 }
 
 /* Smooth hover animations */
@@ -257,10 +270,11 @@ body {
 
 .gallery-item {
   position: relative;
-  border-radius: 15px;
+  border-radius: 15%;
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  aspect-ratio: 1 / 1;
 }
 
 .gallery-item img {
@@ -274,8 +288,8 @@ body {
   transform: scale(1.1);
 }
 
-.gallery-item.tall { grid-row: span 2; }
-.gallery-item.wide { grid-column: span 2; }
+.gallery-item.tall { grid-row: span 1; }
+.gallery-item.wide { grid-column: span 1; }
 .gallery-item.square { grid-row: span 1; }
 
 .gallery-item .overlay {

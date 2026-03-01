@@ -13,12 +13,12 @@ const galleryImages = [
   { id: 2, src: "./2.png", title: "Fiber Extraction Process", size: "wide", offset: "offset-2" },
   { id: 3, src: "./4.png", title: "Used in Nurseries", size: "square", offset: "offset-0" },
   { id: 4, src: "./1.png", title: "Handmade Coir Rope", size: "tall", offset: "offset-3" },
-  { id: 5, src: "./5.png", title: "Ready for Export", size: "wide", offset: "offset-1" },
-  { id: 6, src: "https://placehold.co/400x400/064e3b/fff?text=Texture", title: "Premium Texture", size: "square", offset: "offset-2" },
-  { id: 7, src: "https://placehold.co/400x550/228B22/fff?text=Coconut+Husk", title: "Raw Material", size: "tall", offset: "offset-0" },
-  { id: 8, src: "https://placehold.co/500x350/8B4513/fff?text=Processing", title: "Processing Unit", size: "wide", offset: "offset-3" },
-  { id: 9, src: "https://placehold.co/400x400/2E8B57/fff?text=Packing", title: "Packing Facility", size: "square", offset: "offset-1" },
-  { id: 10, src: "https://placehold.co/450x400/556B2F/fff?text=Export", title: "Export Ready", size: "square", offset: "offset-2" },
+  { id: 5, src: "./6.png", title: "Ready for Export", size: "wide", offset: "offset-1" },
+  { id: 6, src: "./7.png", title: "Premium Texture", size: "square", offset: "offset-2" },
+  { id: 7, src: "./5.png", title: "Raw Material", size: "tall", offset: "offset-0" },
+  { id: 8, src: "./8.png", title: "Processing Unit", size: "wide", offset: "offset-3" },
+  { id: 9, src: "./rope.webp", title: "Packing Facility", size: "square", offset: "offset-1" },
+  { id: 10, src: "./cocopeat.jpg", title: "Export Ready", size: "square", offset: "offset-2" },
 ];
 
 export default function App() {
@@ -324,7 +324,7 @@ export default function App() {
                       <div className="input-group">
                         <input name="company" placeholder="Company (optional)" value={formData.company} onChange={handleInputChange} />
                       </div>
-                      <button className="submit-btn" type="submit">Send via WhatsApp</button>
+                      <button className="submit-btn" type="submit">Get Quotation via WhatsApp</button>
                     </form>
                   )}
                 </div>
